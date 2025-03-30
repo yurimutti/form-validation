@@ -1,88 +1,21 @@
-import { useCallback } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
-import * as yup from "yup";
-
-const validationSchema = yup.object({
-  fullName: yup
-    .string()
-    .required("Full Name is required")
-    .min(3, "Full Name must be at least 3 characters"),
-  email: yup
-    .string()
-    .required("Email is required")
-    .email("Invalid email format"),
-  password: yup
-    .string()
-    .required("Password is required")
-    .min(8, "Password must be at least 8 characters")
-    .matches(/\d/, "Password must contain at least one number")
-    .matches(
-      /[^a-zA-Z0-9]/,
-      "Password must contain at least one special character"
-    ),
-  confirmPassword: yup
-    .string()
-    .oneOf([yup.ref("password")], "Passwords must match")
-    .required("Confirm Password is required"),
-  age: yup
-    .number()
-    .transform((value) => (isNaN(value) ? undefined : value))
-    .nullable()
-    .optional()
-    .min(18, "You must be at least 18"),
-});
-
-type FormValues = yup.InferType<typeof validationSchema>;
-
-const useYupValidationResolver = (
-  validationSchema: yup.ObjectSchema<FormValues>
-) =>
-  useCallback(
-    async (data: FormValues) => {
-      try {
-        const values = await validationSchema.validate(data, {
-          abortEarly: false,
-        });
-
-        return {
-          values,
-          errors: {},
-        };
-      } catch (error) {
-        if (error instanceof yup.ValidationError) {
-          return {
-            values: {},
-            errors: error.inner.reduce(
-              (allErrors, currentError) => ({
-                ...allErrors,
-                [currentError.path!]: {
-                  type: currentError.type ?? "validation",
-                  message: currentError.message,
-                },
-              }),
-              {}
-            ),
-          };
-        }
-
-        return {
-          values: {},
-          errors: {},
-        };
-      }
-    },
-    [validationSchema]
-  );
+import { toast } from "react-toastify";
+import { useYupValidationResolver } from "./hooks/use-yup-validation-resolver";
+import {
+  registrationSchema,
+  type RegistrationFormValues,
+} from "./schemas/registration-schema";
+import { cn } from "@/utils/cn";
 
 export const Form = () => {
-  const resolver = useYupValidationResolver(validationSchema);
+  const resolver = useYupValidationResolver(registrationSchema);
 
   const {
     register,
     handleSubmit,
     formState: { errors, isValid },
     reset,
-  } = useForm<FormValues>({
+  } = useForm<RegistrationFormValues>({
     resolver: resolver,
     defaultValues: {
       fullName: "",
@@ -94,18 +27,26 @@ export const Form = () => {
     mode: "onChange",
   });
 
-  const onSubmit: SubmitHandler<FormValues> = (data) => {
+  const onSubmit: SubmitHandler<RegistrationFormValues> = (data) => {
     console.log("Submitted Data:", data);
-    alert("Form submitted successfully!");
+    toast.success("Form submitted successfully!");
     reset();
   };
+
+  const inputClass = (hasError: boolean) =>
+    cn(
+      "w-full rounded-xl border p-3 text-sm outline-none bg-gray-900",
+      hasError
+        ? "border-red-500"
+        : "border-gray-700 focus:border-blue-500"
+    );
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
       className="w-full max-w-md space-y-4 rounded-2xl bg-gray-800 p-8 shadow-lg"
     >
-      <h1 className="text-2xl font-bold mb-4 text-center">Registration Form</h1>
+      <h1 className="text-2xl font-bold mb-4 text-center">Form Validation</h1>
 
       <div>
         <input
@@ -115,11 +56,7 @@ export const Form = () => {
           type="text"
           placeholder="Full Name"
           {...register("fullName")}
-          className={`w-full rounded-xl border p-3 text-sm outline-none ${
-            errors.fullName
-              ? "border-red-500 bg-gray-900"
-              : "border-gray-700 bg-gray-900 focus:border-blue-500"
-          }`}
+          className={inputClass(!!errors.fullName)}
         />
         {errors.fullName && (
           <p className="text-sm text-red-400 mt-1">{errors.fullName.message}</p>
@@ -133,11 +70,7 @@ export const Form = () => {
           type="email"
           placeholder="Email"
           {...register("email")}
-          className={`w-full rounded-xl border p-3 text-sm outline-none ${
-            errors.email
-              ? "border-red-500 bg-gray-900"
-              : "border-gray-700 bg-gray-900 focus:border-blue-500"
-          }`}
+          className={inputClass(!!errors.email)}
         />
         {errors.email && (
           <p className="text-sm text-red-400 mt-1">{errors.email.message}</p>
@@ -151,11 +84,7 @@ export const Form = () => {
           type="password"
           {...register("password")}
           placeholder="Password"
-          className={`w-full rounded-xl border p-3 text-sm outline-none ${
-            errors.password
-              ? "border-red-500 bg-gray-900"
-              : "border-gray-700 bg-gray-900 focus:border-blue-500"
-          }`}
+          className={inputClass(!!errors.password)}
         />
         {errors.password && (
           <p className="text-sm text-red-400 mt-1">{errors.password.message}</p>
@@ -171,11 +100,7 @@ export const Form = () => {
           type="password"
           {...register("confirmPassword")}
           placeholder="Confirm Password"
-          className={`w-full rounded-xl border p-3 text-sm outline-none ${
-            errors.confirmPassword
-              ? "border-red-500 bg-gray-900"
-              : "border-gray-700 bg-gray-900 focus:border-blue-500"
-          }`}
+          className={inputClass(!!errors.confirmPassword)}
         />
         {errors.confirmPassword && (
           <p className="text-sm text-red-400 mt-1">
@@ -191,11 +116,7 @@ export const Form = () => {
           type="number"
           placeholder="Age"
           {...register("age")}
-          className={`w-full rounded-xl border p-3 text-sm outline-none ${
-            errors.age
-              ? "border-red-500 bg-gray-900"
-              : "border-gray-700 bg-gray-900 focus:border-blue-500"
-          }`}
+          className={inputClass(!!errors.age)}
         />
         {errors.age && (
           <p className="text-sm text-red-400 mt-1">{errors.age.message}</p>
@@ -206,11 +127,12 @@ export const Form = () => {
         <button
           type="submit"
           disabled={!isValid}
-          className={`w-full rounded-xl p-3 font-semibold transition-colors cursor-pointer ${
+          className={cn(
+            "w-full rounded-xl p-3 font-semibold transition-colors cursor-pointer",
             isValid
               ? "bg-blue-600 hover:bg-blue-700"
               : "bg-gray-700 cursor-not-allowed"
-          }`}
+          )}
         >
           Submit
         </button>

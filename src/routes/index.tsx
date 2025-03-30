@@ -1,5 +1,5 @@
+import { Form } from "@/components/form";
 import { createFileRoute } from "@tanstack/react-router";
-import { Form } from "react-hook-form";
 
 export const Route = createFileRoute("/")({
   component: App,
