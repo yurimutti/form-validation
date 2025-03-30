@@ -1,30 +1,47 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, type FormEvent } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
+
+// Part 2: Add Validation Logic
+// Objective:
+// Incorporate validation for the form fields.
+
+// Tasks:
+// Implement validation for each field:
+// Full Name: Required, minimum 3 characters.
+// Email: Required, valid email format.
+// Password: Required, minimum 8 characters, must include at least one number and one special character.
+// Confirm Password: Must match the Password field.
+// Age: Optional, must be a number greater than or equal to 18.
+// Display error messages for invalid fields.
+// Disable the "Submit" button if the form has any validation errors.
+// Requirements:
+// Use custom validation logic or a library (e.g., Yup, React Hook Form, or Formik).
+// Ensure validation messages appear dynamically as the user interacts with the form.
+
+
+type FormValues = {
+  fullName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  age: number | "";
+};
 
 export const Route = createFileRoute("/")({
   component: App,
 });
 
 function App() {
-  const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    age: "",
-  });
+  const { register, handleSubmit } = useForm<FormValues>();
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    console.log(formData);
-  };
+  const onSubmit: SubmitHandler<FormValues> = data => console.log(data);
 
   return (
     <div className="text-center">
       <header className="min-h-screen flex flex-col items-center justify-center bg-[#282c34] text-white text-[calc(10px+2vmin)]">
         <div className="flex min-h-screen items-center justify-center text-white px-4">
           <form
-            onSubmit={handleSubmit}
+            onSubmit={handleSubmit(onSubmit)}
             className="w-full max-w-md space-y-4 rounded-2xl bg-gray-800 p-8 shadow-lg"
           >
             <h1 className="text-2xl font-bold mb-4 text-center">
@@ -33,54 +50,36 @@ function App() {
 
             <input
               type="text"
-              name="fullName"
               placeholder="Full Name"
-              onChange={(e) =>
-                setFormData({ ...formData, fullName: e.target.value })
-              }
+              {...register("fullName")}
               className="w-full rounded-xl border border-gray-700 bg-gray-900 p-3 text-sm outline-none focus:border-blue-500"
             />
 
             <input
               type="email"
-              name="email"
               placeholder="Email"
-              onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
-              }
+              {...register("email")}
               className="w-full rounded-xl border border-gray-700 bg-gray-900 p-3 text-sm outline-none focus:border-blue-500"
             />
 
             <input
               type="password"
-              name="password"
+              {...register("password")}
               placeholder="Password"
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
-              }
               className="w-full rounded-xl border border-gray-700 bg-gray-900 p-3 text-sm outline-none focus:border-blue-500"
             />
 
             <input
               type="password"
-              name="confirmPassword"
+              {...register("confirmPassword")}
               placeholder="Confirm Password"
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  confirmPassword: e.target.value,
-                })
-              }
               className="w-full rounded-xl border border-gray-700 bg-gray-900 p-3 text-sm outline-none focus:border-blue-500"
             />
 
             <input
               type="number"
-              name="age"
               placeholder="Age"
-              onChange={(e) =>
-                setFormData({ ...formData, age: e.target.value })
-              }
+              {...register("age")}
               className="w-full rounded-xl border border-gray-700 bg-gray-900 p-3 text-sm outline-none focus:border-blue-500"
             />
 
