@@ -1,33 +1,22 @@
 import { createFileRoute } from "@tanstack/react-router";
-import type { FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 
 export const Route = createFileRoute("/")({
   component: App,
 });
 
-// Form validation
-
-// Part 1: Basic Form Implementation
-// Objective:
-// Set up the structure and functionality of the form without validation logic.
-
-// Tasks:
-// Create a registration form with the following fields:
-// Full Name (text input)
-// Email (text input)
-// Password (password input)
-// Confirm Password (password input)
-// Age (number input)
-// Add a "Submit" button.
-// On submission, log the form data to the console.
-// Requirements:
-// Use controlled components for form fields.
-// Display the submitted data in the console only when the "Submit" button is clicked.
-
 function App() {
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    age: "",
+  });
+
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log("submited");
+    console.log(formData);
   };
 
   return (
@@ -46,6 +35,9 @@ function App() {
               type="text"
               name="fullName"
               placeholder="Full Name"
+              onChange={(e) =>
+                setFormData({ ...formData, fullName: e.target.value })
+              }
               className="w-full rounded-xl border border-gray-700 bg-gray-900 p-3 text-sm outline-none focus:border-blue-500"
             />
 
@@ -53,6 +45,9 @@ function App() {
               type="email"
               name="email"
               placeholder="Email"
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
               className="w-full rounded-xl border border-gray-700 bg-gray-900 p-3 text-sm outline-none focus:border-blue-500"
             />
 
@@ -60,6 +55,9 @@ function App() {
               type="password"
               name="password"
               placeholder="Password"
+              onChange={(e) =>
+                setFormData({ ...formData, password: e.target.value })
+              }
               className="w-full rounded-xl border border-gray-700 bg-gray-900 p-3 text-sm outline-none focus:border-blue-500"
             />
 
@@ -67,6 +65,12 @@ function App() {
               type="password"
               name="confirmPassword"
               placeholder="Confirm Password"
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  confirmPassword: e.target.value,
+                })
+              }
               className="w-full rounded-xl border border-gray-700 bg-gray-900 p-3 text-sm outline-none focus:border-blue-500"
             />
 
@@ -74,7 +78,9 @@ function App() {
               type="number"
               name="age"
               placeholder="Age"
-            
+              onChange={(e) =>
+                setFormData({ ...formData, age: e.target.value })
+              }
               className="w-full rounded-xl border border-gray-700 bg-gray-900 p-3 text-sm outline-none focus:border-blue-500"
             />
 
