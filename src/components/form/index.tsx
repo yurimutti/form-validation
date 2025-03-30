@@ -6,6 +6,13 @@ import {
   type RegistrationFormValues,
 } from "./schemas/registration-schema";
 import { cn } from "@/utils/cn";
+import { ErrorMessage } from "@hookform/error-message";
+
+const inputClass = (hasError: boolean) =>
+  cn(
+    "w-full rounded-xl border p-3 text-sm outline-none bg-gray-900",
+    hasError ? "border-red-500" : "border-gray-700 focus:border-blue-500"
+  );
 
 export const Form = () => {
   const resolver = useYupValidationResolver(registrationSchema);
@@ -33,14 +40,6 @@ export const Form = () => {
     reset();
   };
 
-  const inputClass = (hasError: boolean) =>
-    cn(
-      "w-full rounded-xl border p-3 text-sm outline-none bg-gray-900",
-      hasError
-        ? "border-red-500"
-        : "border-gray-700 focus:border-blue-500"
-    );
-
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -58,9 +57,15 @@ export const Form = () => {
           {...register("fullName")}
           className={inputClass(!!errors.fullName)}
         />
-        {errors.fullName && (
-          <p className="text-sm text-red-400 mt-1">{errors.fullName.message}</p>
-        )}
+        <ErrorMessage
+          errors={errors}
+          name="fullName"
+          render={({ message }) => (
+            <p id="fullName-error" className="text-sm text-red-400 mt-1">
+              {message}
+            </p>
+          )}
+        />
       </div>
 
       <div>
@@ -72,9 +77,15 @@ export const Form = () => {
           {...register("email")}
           className={inputClass(!!errors.email)}
         />
-        {errors.email && (
-          <p className="text-sm text-red-400 mt-1">{errors.email.message}</p>
-        )}
+        <ErrorMessage
+          errors={errors}
+          name="email"
+          render={({ message }) => (
+            <p id="email-error" className="text-sm text-red-400 mt-1">
+              {message}
+            </p>
+          )}
+        />
       </div>
 
       <div>
@@ -86,9 +97,15 @@ export const Form = () => {
           placeholder="Password"
           className={inputClass(!!errors.password)}
         />
-        {errors.password && (
-          <p className="text-sm text-red-400 mt-1">{errors.password.message}</p>
-        )}
+        <ErrorMessage
+          errors={errors}
+          name="password"
+          render={({ message }) => (
+            <p id="password-error" className="text-sm text-red-400 mt-1">
+              {message}
+            </p>
+          )}
+        />
       </div>
 
       <div>
@@ -102,11 +119,15 @@ export const Form = () => {
           placeholder="Confirm Password"
           className={inputClass(!!errors.confirmPassword)}
         />
-        {errors.confirmPassword && (
-          <p className="text-sm text-red-400 mt-1">
-            {errors.confirmPassword.message}
-          </p>
-        )}
+        <ErrorMessage
+          errors={errors}
+          name="confirmPassword"
+          render={({ message }) => (
+            <p id="confirmPassword-error" className="text-sm text-red-400 mt-1">
+              {message}
+            </p>
+          )}
+        />
       </div>
 
       <div>
@@ -118,9 +139,15 @@ export const Form = () => {
           {...register("age")}
           className={inputClass(!!errors.age)}
         />
-        {errors.age && (
-          <p className="text-sm text-red-400 mt-1">{errors.age.message}</p>
-        )}
+        <ErrorMessage
+          errors={errors}
+          name="age"
+          render={({ message }) => (
+            <p id="age-error" className="text-sm text-red-400 mt-1">
+              {message}
+            </p>
+          )}
+        />
       </div>
 
       <div className="flex gap-2">
