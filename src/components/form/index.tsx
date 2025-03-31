@@ -7,13 +7,20 @@ import {
 } from "./schemas/registration-schema";
 import { cn } from "@/utils/cn";
 import { ErrorMessage } from "@hookform/error-message";
-import { fields } from "./constants";
 
 const inputClass = (hasError: boolean) =>
   cn(
     "w-full rounded-xl border p-3 text-sm outline-none bg-gray-900",
     hasError ? "border-red-500" : "border-gray-700 focus:border-blue-500"
   );
+
+const defaultValues: Partial<RegistrationFormValues> = {
+  fullName: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
+  age: undefined,
+};
 
 export const Form = () => {
   const resolver = useYupValidationResolver(registrationSchema);
@@ -25,13 +32,7 @@ export const Form = () => {
     reset,
   } = useForm<RegistrationFormValues>({
     resolver,
-    defaultValues: {
-      fullName: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-      age: undefined,
-    },
+    defaultValues,
     mode: "onChange",
   });
 
@@ -48,36 +49,138 @@ export const Form = () => {
     >
       <h1 className="text-2xl font-bold mb-4 text-center">Form Validation</h1>
 
-      {fields.map((field) => (
-        <div key={field.name}>
-          <Controller
-            name={field.name}
-            control={control}
-            render={({ field: controllerField }) => (
-              <input
-                {...controllerField}
-                aria-invalid={!!errors[field.name]}
-                aria-errormessage={
-                  errors[field.name] ? `${field.name}-error` : undefined
-                }
-                type={field.type}
-                autoFocus={field.autoFocus}
-                placeholder={field.placeholder}
-                className={inputClass(!!errors[field.name])}
-              />
-            )}
-          />
-          <ErrorMessage
-            errors={errors}
-            name={field.name}
-            render={({ message }) => (
-              <p id={`${field.name}-error`} className="text-sm text-red-400 mt-1">
-                {message}
-              </p>
-            )}
-          />
-        </div>
-      ))}
+      <div>
+        <Controller
+          name="fullName"
+          control={control}
+          render={({ field }) => (
+            <input
+              {...field}
+              type="text"
+              placeholder="Full Name"
+              aria-invalid={!!errors.fullName}
+              aria-errormessage={errors.fullName ? "fullName-error" : undefined}
+              className={inputClass(!!errors.fullName)}
+            />
+          )}
+        />
+        <ErrorMessage
+          errors={errors}
+          name="fullName"
+          render={({ message }) => (
+            <p id="fullName-error" className="text-sm text-red-400 mt-1">
+              {message}
+            </p>
+          )}
+        />
+      </div>
+
+      <div>
+        <Controller
+          name="email"
+          control={control}
+          render={({ field }) => (
+            <input
+              {...field}
+              type="email"
+              placeholder="Email"
+              aria-invalid={!!errors.email}
+              aria-errormessage={errors.email ? "email-error" : undefined}
+              className={inputClass(!!errors.email)}
+            />
+          )}
+        />
+        <ErrorMessage
+          errors={errors}
+          name="email"
+          render={({ message }) => (
+            <p id="email-error" className="text-sm text-red-400 mt-1">
+              {message}
+            </p>
+          )}
+        />
+      </div>
+
+      <div>
+        <Controller
+          name="password"
+          control={control}
+          render={({ field }) => (
+            <input
+              {...field}
+              type="password"
+              placeholder="Password"
+              aria-invalid={!!errors.password}
+              aria-errormessage={errors.password ? "password-error" : undefined}
+              className={inputClass(!!errors.password)}
+            />
+          )}
+        />
+        <ErrorMessage
+          errors={errors}
+          name="password"
+          render={({ message }) => (
+            <p id="password-error" className="text-sm text-red-400 mt-1">
+              {message}
+            </p>
+          )}
+        />
+      </div>
+
+      <div>
+        <Controller
+          name="confirmPassword"
+          control={control}
+          render={({ field }) => (
+            <input
+              {...field}
+              type="password"
+              placeholder="Confirm Password"
+              aria-invalid={!!errors.confirmPassword}
+              aria-errormessage={
+                errors.confirmPassword ? "confirmPassword-error" : undefined
+              }
+              className={inputClass(!!errors.confirmPassword)}
+            />
+          )}
+        />
+        <ErrorMessage
+          errors={errors}
+          name="confirmPassword"
+          render={({ message }) => (
+            <p id="confirmPassword-error" className="text-sm text-red-400 mt-1">
+              {message}
+            </p>
+          )}
+        />
+      </div>
+
+      <div>
+        <Controller
+          name="age"
+          control={control}
+          render={({ field }) => (
+            <input
+              {...field}
+              type="number"
+              placeholder="Age"
+              aria-invalid={!!errors.age}
+              aria-errormessage={errors.age ? "age-error" : undefined}
+              className={inputClass(!!errors.age)}
+              value={field.value ?? ""}
+            />
+          )}
+        />
+        <ErrorMessage
+          errors={errors}
+          name="age"
+          render={({ message }) => (
+            <p id="age-error" className="text-sm text-red-400 mt-1">
+              {message}
+            </p>
+          )}
+        />
+      </div>
 
       <div className="flex gap-2">
         <button
